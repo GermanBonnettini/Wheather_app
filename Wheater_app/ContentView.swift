@@ -8,28 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var isNight = false
+    
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [.blue ,.lightBlue]), startPoint: .topLeading,
-                endPoint: .bottomTrailing)
-                .ignoresSafeArea(edges: .all)
+            
+            BackgroundView(isNight: isNight)
+            
             VStack {
-                Text("Buenos Aires, AR")
-                    .font(.system(size: 30, weight: .medium,design: .default))
-                    .foregroundColor(.white)
-                    .padding( )
+                CityTextView(cityName: "Buenos Aires, AR")
                 
-                VStack (spacing: 8) {
-                    Image(systemName: "cloud.sun.fill")
-                        .renderingMode(.original)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 200, height: 200)
-                    Text("34°")
-                    .font(.system(size: 75, weight: .medium))
-                    .foregroundStyle(.white)
-                }
-                .padding(.bottom, 40)
+                MainWeatherView(image: isNight ? "moon.stars.fill": "cloud.sun.fill", temp: "34")
+                
                 HStack {
                     weekWheather(dayOfWeek: "TUE",
                                  imageName: "cloud.rain.fill",
@@ -53,17 +44,18 @@ struct ContentView: View {
                 }
                 Spacer()
                 
-                Button { print("Tapped")}
-                label: { Text ("Change Day Time")
-                        .frame(width: 330, height: 60)
-                        .background(Color .blue)
-                        .foregroundStyle(.white)
-                        .font(.system(size: 25))
-                        .clipShape(.capsule)
+                Button { isNight.toggle() }
+                label: {
+                    ButtonText(switchText: "Change to Night Time", backColor: .white, textColor: .blue)
+                        
                     
                 }
                     Spacer()
                 
+            }.onAppear {
+                let button = ButtonText(switchText: "Change to Night Time", backColor: .white, textColor: .blue)
+                    
+                print (type(of: button.body))
             }
         }
     }
@@ -86,7 +78,7 @@ struct weekWheather: View {
                 .foregroundColor(.black)
             
             Image(systemName: imageName)
-                .renderingMode(.original)
+                .symbolRenderingMode(.multicolor)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 50, height: 50)
@@ -98,4 +90,50 @@ struct weekWheather: View {
             
     }
 }
+
+
+struct BackgroundView: View {
+    
+    var isNight: Bool
+ 
+    var body: some View {
+//        LinearGradient(gradient: Gradient(colors: [isNight ? .black: .blue, isNight ? .gray: Color("LightBlue")]), startPoint: .topLeading,
+//                       endPoint: .bottomTrailing)
+        ContainerRelativeShape()
+            .fill(isNight ? Color.black.gradient: Color.blue.gradient)
+        .ignoresSafeArea()
+    }
+}
+
+struct CityTextView: View {
+    
+    var cityName: String
+    
+    var body: some View {
+        Text(cityName)
+            .font(.system(size: 30, weight: .medium,design: .default))
+            .foregroundColor(.white)
+            .padding( )
+    }
+}
+
+struct MainWeatherView: View {
+    
+    var image, temp: String
+    
+    var body: some View {
+        VStack (spacing: 8) {
+            Image(systemName: image)
+                .renderingMode(.original)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 200, height: 200)
+            Text("\(temp)°")
+                .font(.system(size: 75, weight: .medium))
+                .foregroundStyle(.white)
+        }
+        .padding(.bottom, 40)
+    }
+}
+
 
