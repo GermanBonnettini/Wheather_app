@@ -1,2 +1,2 @@
-# Wheather_app
+# Weather_app
 SwiftUI + Fundamentals 
